@@ -19,15 +19,15 @@ const Content = () => {
       publishDate: "11 March, 2025",
       status: "Unknown",
       Time: "Today",
-      gpas: { gpa1: "3.00"},
+      gpas: { gpa2: "3.00,", gpa1: "ref" },
     },
     {
       id: 2,
       semester: "1st Semester",
       publishDate: "01 September, 2024",
-      status: "Passed",
+      status: "ref",
       Time: "6 months ago",
-      gpas: { gpa2: "3.00,", gpa1: "ref" }, // Ensure uniform object format
+      gpas: { gpa1: "Mathmatics-1" },
     },
   ];
 
