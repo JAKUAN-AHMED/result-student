@@ -10,26 +10,109 @@ import { MdDownload, MdFavoriteBorder } from "react-icons/md";
 const Content = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [roll, setRoll] = useState("");
+  const [resultData, setResultData] = useState([]);
 
   // Dummy Result Data (Replace with actual API call)
-  const resultData = [
+  const student1 = [
     {
       id: 1,
       semester: "2nd Semester",
       publishDate: "11 March, 2025",
       status: "Unknown",
       Time: "Today",
-      gpas: { gpa2: "3.00,", gpa1: "ref" },
+      gpas: { gpa1: "3.00" },
     },
     {
       id: 2,
       semester: "1st Semester",
       publishDate: "01 September, 2024",
-      status: "ref",
+      status: "Unknown",
       Time: "6 months ago",
       gpas: { gpa1: "Mathmatics-1" },
     },
   ];
+
+  const student2 = [
+    {
+      id: 1,
+      semester: "6th Semester",
+      publishDate: "11 March, 2025",
+      status: "Passed",
+      Time: "Today",
+      gpas: { gpa1: "3.26" },
+    },
+    {
+      id: 2,
+      semester: "5th Semester",
+      publishDate: "01 September, 2024",
+      status: "Passed",
+      Time: "6 months ago",
+      gpas: { gpa1: "3.61" },
+    },
+    {
+      id: 3,
+      semester: "4th Semester",
+      publishDate: "01 March, 2024",
+      status: "Passed",
+      Time: "1 Year ago",
+      gpas: { gpa1: "3.58" },
+    },
+    {
+      id: 4,
+      semester: "3rd Semester",
+      publishDate: "01 September, 2023",
+      status: "Passed",
+      Time: "1 Year 6 months ago",
+      gpas: { gpa1: "3.62" },
+    },
+    {
+      id: 5,
+      semester: "2nd Semester",
+      publishDate: "01 March, 2023",
+      status: "Passed",
+      Time: "2 Years ago",
+      gpas: { gpa1: "3.61" },
+    },
+    {
+      id: 6,
+      semester: "1st Semester",
+      publishDate: "01 September, 2022",
+      status: "Passed",
+      Time: "2 Years 6 months ago",
+      gpas: { gpa1: "3.73" },
+    },
+  ];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  
+    // Ensure roll is a valid number
+    const rollNumber = parseInt(roll, 10);
+  
+    // Check if roll is between 676800 and 676999
+    const isStudent2 = rollNumber >= 676800 && rollNumber <= 676999;
+    let studentData = isStudent2 ? student2 : student1;
+  
+    // Extract last two digits of the roll number
+    const lastTwoDigits = parseInt(roll.slice(-2), 10) / 100;
+  
+    // Modify GPAs dynamically without exceeding 4.00
+    const updatedResults = studentData.map((data) => {
+      let baseGPA = parseFloat(data.gpas.gpa1);
+      if (!isNaN(baseGPA)) {
+        let finalGPA = baseGPA + lastTwoDigits + 0.05;
+        finalGPA = Math.min(finalGPA, 4.00); // Ensure max GPA is 4.00
+        return { ...data, gpas: { gpa1: finalGPA.toFixed(2) } };
+      }
+      return data;
+    });
+  
+    setResultData(updatedResults);
+    setIsOpen(true);
+  };
+  
+  
+  
 
   return (
     <div>
@@ -51,13 +134,7 @@ const Content = () => {
 
         {/* Form */}
         <div className="bg-white shadow-md p-6 rounded-md w-[400px]">
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setIsOpen(true);
-            }}
-          >
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             {/* Exam Select */}
             <div>
               <label className="block text-gray-700 font-medium">Exam</label>
@@ -100,85 +177,55 @@ const Content = () => {
       </div>
 
       {/* MODAL */}
-      {isOpen && (
-        <div className="fixed inset-0 bg-white bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-md w-[600px] shadow-2xl">
-            {/* Modal Header */}
-            <div className="flex items-center flex-col  justify-items-end z-20">
-              <div className="flex bg-center items-center justify-center mx-auto w-full h-full">
-                <div className="flex justify-center flex-col items-center mb-4">
-                  <h2 className="font-bold">{roll}</h2>
-                  <h2 className="text-gray-400">Diploma in Engineering (2022)</h2>
-                  <h2 className="text-gray-400">
-                    Moulvibazar Polytechnic Institute, Moulvibazar
-                  </h2>
-                </div>
-                <button className="flex ml-10" onClick={() => setIsOpen(false)}>
-                  X
-                </button>
-              </div>
+{isOpen && (
+  <div className="fixed inset-0 bg-slate-100 bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white px-4 py-6 rounded-lg shadow-lg w-[90%] max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl overflow-y-auto max-h-[80vh]">
+      
+      {/* Modal Header */}
+      <div className="flex flex-col items-center">
+        <h2 className="font-bold">{roll}</h2>
+        <h2 className="text-gray-500 text-sm">Diploma in Engineering (2022)</h2>
+        <h2 className="text-gray-500 text-sm text-center">
+          Moulvibazar Polytechnic Institute, Moulvibazar
+        </h2>
+      </div>
 
-              <div>
-                <ul className="flex items-center justify-center space-x-4">
-                  <li className="flex items-center gap-1">
-                    <span>
-                      <IoCalculatorOutline />
-                    </span>
-                    CGPA
-                  </li>
-                  <li className="flex items-center gap-1">
-                    <span>
-                      <MdFavoriteBorder />
-                    </span>
-                    Save
-                  </li>
-                  <li className="flex items-center gap-1">
-                    <span>
-                      <IoCopyOutline />
-                    </span>
-                    Copy
-                  </li>
-                  <li className="flex items-center gap-1">
-                    <span>
-                      <IoShareSocialOutline />
-                    </span>
-                    Share
-                  </li>
-                  <li className="flex items-center gap-1">
-                    <span>
-                      <MdDownload />
-                    </span>
-                    Download
-                  </li>
-                </ul>
-              </div>
-            </div>
+      {/* Close Button */}
+      <button 
+        className="right-0 text-black" 
+        onClick={() => setIsOpen(false)}
+      >
+        ✕
+      </button>
 
-            <div className="mb-2">
-              {resultData.map((data, idx) => (
-                <div key={idx}>
-                  <div className="flex items-center justify-between">
-                    <h2>{data.semester}</h2>
-                    <h2>Status: {data.status}</h2>
-                  </div>
-                  <div className="p-2 rounded bg-slate-100 shadow-lg">
-                    <div className="flex items-center justify-between">
-                      <h2>Publish Date: <span className="text-blue-300">{data.publishDate}</span></h2>
-                      <h2>{data.Time}</h2>
-                    </div>
-                    <div className="p-4 rounded">
-                      <h2 className="text-center bg-slate-200 p-4 rounded-md font-bold text-red-400 text-2xl">
-                        {data.gpas.gpa2 ? `gpas :${data.gpas.gpa2} ` : ""}
-                        {data.gpas.gpa1}
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              ))}
+      {/* Icons Row */}
+      <div className="flex justify-center space-x-4 my-4">
+        <button className="flex items-center text-gray-700"><IoCalculatorOutline /> CGPA</button>
+        <button className="flex items-center text-gray-700"><MdFavoriteBorder /> Save</button>
+        <button className="flex items-center text-gray-700"><IoCopyOutline /> Copy</button>
+        <button className="flex items-center text-gray-700"><IoShareSocialOutline /> Share</button>
+        <button className="flex items-center text-gray-700"><MdDownload /> Download</button>
+      </div>
+
+      {/* Modal Content */}
+      <div className="space-y-4">
+        {resultData.map((data, idx) => (
+          <div key={idx} className="bg-gray-100 p-4 rounded-lg shadow">
+            <div className="flex justify-between">
+              <h2>{data.semester}</h2>
+              <h2 className="text-sm">Status: {data.status}</h2>
             </div>
+            <p className="text-sm">Publish Date: <span className="text-blue-500">{data.publishDate}</span></p>
+            <h2 className="text-center bg-gray-200 py-2 rounded-md font-bold text-red-500 text-xl">
+              GPA: {data.gpas.gpa1}
+            </h2>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
